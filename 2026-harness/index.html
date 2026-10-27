@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Harness 分享會行前通知</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+body{margin:0}
+/* Layout: single reading column; a sticky OS switch; numbered steps because order matters */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#1b2230; --muted:#5a6578; --line:#dde2ea;
+  --accent:#1f5fbf; --accent-soft:#e6eefb; --must:#b45309; --must-soft:#fdf1e2;
+  --ok:#1f7a4d; --ok-soft:#e3f4ea; --code-bg:#121826; --code-fg:#e6ebf4;
+  --font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10141c; --surface:#171d28; --fg:#e7ebf2; --muted:#9aa5b8; --line:#2a3242;
+  --accent:#7aa8f0; --accent-soft:#1c2a42; --must:#f0a957; --must-soft:#33261a;
+  --ok:#5cc792; --ok-soft:#173326; --code-bg:#0a0d13; --code-fg:#e6ebf4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141c; --surface:#171d28; --fg:#e7ebf2; --muted:#9aa5b8; --line:#2a3242;
+  --accent:#7aa8f0; --accent-soft:#1c2a42; --must:#f0a957; --must-soft:#33261a;
+  --ok:#5cc792; --ok-soft:#173326; --code-bg:#0a0d13; --code-fg:#e6ebf4; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.75}
+.wrap{max-width:760px;margin:0 auto;padding-block:40px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{text-wrap:balance;line-height:1.35;margin:0}
+h1{font-size:clamp(1.7rem,4.5vw,2.3rem);font-weight:900}
+h2{font-size:1.35rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0}
+.eyebrow{font-size:.8rem;letter-spacing:.12em;color:var(--accent);font-weight:700}
+.muted{color:var(--muted)}
+header{display:flex;flex-direction:column;gap:14px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.meta div{background:var(--surface);padding:12px 16px;min-width:0}
+.meta dt{font-size:.78rem;color:var(--muted);letter-spacing:.06em}
+.meta dd{margin:0;font-weight:500}
+.tbd{color:var(--must);font-weight:700}
+section{display:flex;flex-direction:column;gap:16px}
+.quote{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--muted)}
+.tldr{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.tldr ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:999px;vertical-align:2px;margin-right:6px;white-space:nowrap}
+.tag.must{background:var(--must-soft);color:var(--must)}
+.tag.opt{background:var(--accent-soft);color:var(--accent)}
+.os-bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:.9rem;padding:6px 16px;border:0;background:var(--surface);color:var(--fg);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:700}
+.seg button:focus-visible,.copy:focus-visible,.check input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.progress{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:20px;counter-reset:s}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0;counter-increment:s}
+.step.is-must{border-color:color-mix(in srgb,var(--must) 45%,var(--line))}
+.step-head{display:flex;gap:12px;align-items:flex-start}
+.step-head::before{content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.step.done .step-head::before{content:"✓";background:var(--ok-soft);color:var(--ok)}
+.step-body{display:flex;flex-direction:column;gap:10px;min-width:0}
+.step ol,.step ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.check{display:flex;gap:8px;align-items:center;font-size:.92rem;color:var(--muted);cursor:pointer;border-top:1px dashed var(--line);padding-top:10px}
+.check input{width:18px;height:18px;accent-color:var(--ok)}
+.code{position:relative;background:var(--code-bg);color:var(--code-fg);border-radius:8px;font-family:var(--font-mono);font-size:.86rem;line-height:1.6;min-width:0}
+.code pre{margin:0;padding:12px 70px 12px 14px;overflow-x:auto;white-space:pre}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-family:var(--font-body);font-size:.78rem;padding:2px 10px;border-radius:6px;border:1px solid #3a4458;background:#1f2737;color:#e6ebf4;cursor:pointer}
+code.i{font-family:var(--font-mono);font-size:.88em;background:var(--accent-soft);padding:1px 5px;border-radius:4px;word-break:break-all}
+.note{font-size:.92rem;background:var(--must-soft);border-radius:8px;padding:10px 14px}
+.note.ok{background:var(--ok-soft)}
+a{color:var(--accent);text-underline-offset:3px}
+[data-os="win"] .mac-only,[data-os="mac"] .win-only{display:none}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;color:var(--muted);letter-spacing:.06em;font-weight:500}
+tr:last-child td{border-bottom:0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+details summary{cursor:pointer;font-weight:500}
+details[open] summary{margin-bottom:8px}
+footer{font-size:.9rem;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app" data-os="win">
+
+<header>
+  <span class="eyebrow">DSIGroup 內部教育訓練 · 行前通知</span>
+  <h1>AI Agent（Harness 架構）分享會<br>上課前，請先完成這幾件事</h1>
+  <p class="muted">講師：陳彥宏老師。這次是「現場實作」，大家會一起動手操作，所以請先把電腦環境準備好，當天就能直接跟著做，不用卡在安裝。</p>
+  <dl class="meta">
+    <div><dt>日期時間</dt><dd>10/30（五）10:30–12:30</dd></div>
+    <div><dt>地點</dt><dd>第一會議室</dd></div>
+    <div><dt>請攜帶</dt><dd>筆電 + 充電器</dd></div>
+    <div><dt>預估準備時間</dt><dd>30–60 分鐘</dd></div>
+  </dl>
+</header>
+
+<section>
+  <h2>老師怎麼說</h2>
+  <p class="quote">「我看了問卷，大家都很客氣說不清楚，我們現場實際演練演練，彼此感受一下大家有沒有藏私貨 ha。」</p>
+  <p>老師目前在做「自主 Harness」研發，不想被單一大廠綁住，所以主要使用開源工具 <strong>opencode</strong> 當作中間層。他提到，如果要做政府專案、而且是推「地端 LLM」（模型裝在自己機房、資料不出去），現階段主流做法就是用 opencode 來處理。這和我們部門接政府標案的方向很相關，值得大家好好聽。</p>
+  <details>
+    <summary>聽不懂「Harness」、「中間層」？看這裡（30 秒白話版）</summary>
+    <p>AI 模型（像 Claude、GPT、或公司自己架的模型）本身只會「回話」。<strong>Harness</strong> 就像替模型配上一套「手腳和工具箱」：讓它能讀檔案、跑程式、上網、一步步完成任務，這樣的組合就叫 AI Agent。<strong>opencode</strong> 是一個開源的 Harness，可以自由換不同模型，所以不會被某一家廠商綁死。</p>
+  </details>
+</section>
+
+<section class="tldr">
+  <h2>懶人包：你要做的事</h2>
+  <ul>
+    <li><span class="tag must">必做</span>有 Claude 或 ChatGPT 帳號的人，把<strong>桌面版 App</strong> 裝到電腦上並登入</li>
+    <li><span class="tag must">必做</span>安裝 <strong>Python</strong>，並確認裝成功</li>
+    <li><span class="tag opt">選做</span>安裝老師 demo 會用到的 Python 套件（檔案很大，有興趣的人再裝）</li>
+    <li><span class="tag opt">選做</span>先瀏覽老師提供的簡報與素材</li>
+  </ul>
+  <p class="muted" style="font-size:.92rem">裝不起來沒關係，當天照樣來，帶著錯誤畫面截圖就好。</p>
+</section>
+
+<div class="os-bar">
+  <span style="font-weight:500">我的電腦是：</span>
+  <div class="seg" role="group" aria-label="選擇作業系統">
+    <button type="button" id="os-win" data-os="win" aria-pressed="true">Windows</button>
+    <button type="button" id="os-mac" data-os="mac" aria-pressed="false">Mac</button>
+  </div>
+  <span class="progress" id="progress">已完成 0 / 5</span>
+</div>
+
+<ol class="steps">
+
+  <!-- 1 -->
+  <li class="step is-must" data-key="desktop">
+    <div class="step-head"><div class="step-body">
+      <h3><span class="tag must">必做</span>安裝 Claude / ChatGPT 桌面版</h3>
+      <p>有帳號的人才需要做；兩個都有就兩個都裝。沒有帳號的同仁可以跳過，當天跟旁邊同事一起看。</p>
+      <ol>
+        <li>Claude 桌面版：打開 <a href="https://claude.ai/download" target="_blank" rel="noopener">claude.ai/download</a>，選擇 <span class="win-only">Windows</span><span class="mac-only">macOS</span> 版下載。</li>
+        <li>ChatGPT 桌面版：打開 <a href="https://openai.com/chatgpt/download/" target="_blank" rel="noopener">openai.com/chatgpt/download</a>，選擇 <span class="win-only">Windows</span><span class="mac-only">macOS</span> 版下載。</li>
+        <li class="win-only">雙擊下載好的安裝檔，一路按「下一步 / 安裝」即可。</li>
+        <li class="mac-only">打開下載的 .dmg 檔，把 App 圖示拖進「應用程式（Applications）」資料夾。</li>
+        <li>打開 App，<strong>用你平常的帳號登入</strong>，隨便問一句話，確認有回應。</li>
+      </ol>
+      <p class="note win-only">公司電腦若跳出「需要系統管理員權限」，請找 IT 協助安裝，不要自己想辦法繞過。</p>
+    </div></div>
+    <label class="check"><input type="checkbox" id="chk-desktop"> 我已經裝好並登入成功</label>
+  </li>
+
+  <!-- 2 -->
+  <li class="step is-must" data-key="python">
+    <div class="step-head"><div class="step-body">
+      <h3><span class="tag must">必做</span>安裝 Python</h3>
+      <p>建議安裝 <strong>Python 3.12</strong>（3.11 也可以）。版本太新的話，部分 AI 套件可能還沒支援。</p>
+
+      <div class="win-only" style="display:flex;flex-direction:column;gap:10px">
+        <ol>
+          <li>打開 <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org/downloads/windows</a>，找到 Python 3.12.x，下載「Windows installer (64-bit)」。</li>
+          <li>雙擊安裝檔。<strong>第一個畫面最下方，一定要勾選「Add python.exe to PATH」</strong>，再按「Install Now」。</li>
+          <li>裝完後，按鍵盤 <code class="i">Win</code> 鍵，輸入 <code class="i">cmd</code>，打開「命令提示字元」（黑色視窗）。</li>
+          <li>複製下面這行貼上，按 Enter：</li>
+        </ol>
+        <div class="code"><pre>python --version</pre><button class="copy" type="button">複製</button></div>
+        <p class="note ok">看到類似 <code class="i">Python 3.12.7</code> 就代表成功。</p>
+        <p class="note">如果出現「不是內部或外部命令」，或跳出 Microsoft Store：通常是忘了勾「Add to PATH」。重新執行安裝檔 → 選「Modify」→ 勾選 Add Python to environment variables；或改試 <code class="i">py --version</code>。</p>
+      </div>
+
+      <div class="mac-only" style="display:flex;flex-direction:column;gap:10px">
+        <ol>
+          <li>打開 <a href="https://www.python.org/downloads/macos/" target="_blank" rel="noopener">python.org/downloads/macos</a>，找到 Python 3.12.x，下載「macOS 64-bit universal2 installer」。</li>
+          <li>打開 .pkg 檔，一路按「繼續 / 安裝」。</li>
+          <li>按 <code class="i">⌘ + 空白鍵</code>，輸入「終端機」或 Terminal，打開它。</li>
+          <li>複製下面這行貼上，按 Enter：</li>
+        </ol>
+        <div class="code"><pre>python3 --version</pre><button class="copy" type="button">複製</button></div>
+        <p class="note ok">看到類似 <code class="i">Python 3.12.7</code> 就代表成功。Mac 上指令要打 <code class="i">python3</code>，不是 <code class="i">python</code>。</p>
+      </div>
+    </div></div>
+    <label class="check"><input type="checkbox" id="chk-python"> 我輸入指令後看到了 Python 版本號</label>
+  </li>
+
+  <!-- 3 -->
+  <li class="step" data-key="materials">
+    <div class="step-head"><div class="step-body">
+      <h3><span class="tag opt">選做</span>先看老師的簡報與素材</h3>
+      <p>老師的簡報、素材，以及下一步要用的 <code class="i">requirements.txt</code> 都放在公司公槽（需在公司網路或 VPN 內）。</p>
+      <ol>
+        <li>用平常的方式打開公槽<span class="win-only">（檔案總管裡的網路磁碟）</span><span class="mac-only">（Finder 裡連過的公司伺服器）</span>。</li>
+        <li>進入公槽後，依序點進下面這幾層資料夾：</li>
+      </ol>
+      <div class="code"><pre id="share-path">dsi-z → 100.共用資源 → 6)教育訓練課程 → 2026_AI agent(Harness架構)分享_陳彥宏老師</pre><button class="copy" type="button">複製</button></div>
+    </div></div>
+    <label class="check"><input type="checkbox" id="chk-materials"> 我打開資料夾看過了</label>
+  </li>
+
+  <!-- 4 -->
+  <li class="step" data-key="packages">
+    <div class="step-head"><div class="step-body">
+      <h3><span class="tag opt">選做</span>安裝 demo 用的 Python 套件</h3>
+      <p>老師會 demo 影音下載與語音轉文字、翻譯、自動做 PPT 與旁白配音等工具。想當天跟著跑的人再裝。</p>
+      <p class="note">先確認：硬碟至少空出 <strong>10 GB</strong>，且最好接網路線或穩定 Wi-Fi。裡面有 PyTorch 等大型 AI 套件，第一次安裝可能要 20–40 分鐘，請在有空時進行。</p>
+      <ol>
+        <li>從上一步的共用資料夾，把 <code class="i">requirements.txt</code> 複製到你電腦上一個新資料夾，例如 <span class="win-only"><code class="i">C:\harness</code></span><span class="mac-only">「文件」裡的 <code class="i">harness</code> 資料夾</span>。</li>
+        <li>打開<span class="win-only">「命令提示字元」（cmd）</span><span class="mac-only">「終端機」</span>，一行一行複製貼上執行：</li>
+      </ol>
+
+      <div class="win-only code"><pre>cd C:\harness
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt</pre><button class="copy" type="button">複製</button></div>
+
+      <div class="mac-only code"><pre>cd ~/Documents/harness
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt</pre><button class="copy" type="button">複製</button></div>
+
+      <details>
+        <summary>這幾行在做什麼？</summary>
+        <ul>
+          <li><code class="i">cd</code>：進到剛剛那個資料夾。</li>
+          <li><code class="i">venv</code>：建立一個「獨立的 Python 小房間」，套件裝在裡面，不會弄亂電腦其他東西。</li>
+          <li><code class="i">activate</code>：走進這個小房間。成功後，指令列最前面會出現 <code class="i">(.venv)</code>。</li>
+          <li><code class="i">pip install -r requirements.txt</code>：照清單把所有套件裝好。畫面會跑很多字，屬正常現象。</li>
+        </ul>
+        <p class="muted" style="margin-top:8px">當天要再用時，記得先 <code class="i">cd</code> 到資料夾並再執行一次 activate 那行。</p>
+      </details>
+
+      <p class="win-only note">請用「命令提示字元」（cmd），不要用 PowerShell。PowerShell 常會擋掉 activate 這一步。</p>
+      <p>清單裡有兩個工具不是 Python 套件，要另外安裝（處理影音和文件轉檔用）：</p>
+      <div class="win-only code"><pre>winget install ffmpeg
+winget install pandoc</pre><button class="copy" type="button">複製</button></div>
+      <div class="mac-only" style="display:flex;flex-direction:column;gap:10px">
+        <p class="muted" style="font-size:.92rem">Mac 需先有 Homebrew（<a href="https://brew.sh" target="_blank" rel="noopener">brew.sh</a>），若沒裝過可跳過這兩個，當天再處理。</p>
+        <div class="code"><pre>brew install ffmpeg pandoc</pre><button class="copy" type="button">複製</button></div>
+      </div>
+      <p class="note">中途出現紅字錯誤？不用慌，<strong>截圖整個視窗</strong>帶來現場即可，這正好是老師想實際演練的部分。</p>
+    </div></div>
+    <label class="check"><input type="checkbox" id="chk-packages"> 套件安裝完成（或已截圖錯誤畫面）</label>
+  </li>
+
+  <!-- 5 -->
+  <li class="step" data-key="opencode">
+    <div class="step-head"><div class="step-body">
+      <h3><span class="tag opt">選做</span>先認識 opencode</h3>
+      <p>不用安裝，花 5 分鐘看一下官網 <a href="https://opencode.ai" target="_blank" rel="noopener">opencode.ai</a> 首頁，知道它長什麼樣子就好。當天老師會用它示範怎麼串接不同模型。</p>
+    </div></div>
+    <label class="check"><input type="checkbox" id="chk-opencode"> 我看過了</label>
+  </li>
+</ol>
+
+<section>
+  <h2>老師的套件清單在做什麼？</h2>
+  <p class="muted">給好奇的同仁參考，看得懂 demo 的方向就好，不需要記。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>功能</th><th>白話說明</th><th>主要套件</th></tr></thead>
+    <tbody>
+      <tr><td>影音下載與轉譯</td><td>下載線上影片，把語音自動轉成逐字稿</td><td>yt-dlp、whisper、qwen-asr</td></tr>
+      <tr><td>翻譯</td><td>在自己電腦上跑翻譯模型，並做簡繁轉換</td><td>transformers、torch、opencc</td></tr>
+      <tr><td>來源轉 Markdown</td><td>把 PDF、Word、Excel、網頁轉成 AI 好讀的文字</td><td>PyMuPDF、mammoth、beautifulsoup4</td></tr>
+      <tr><td>PPT Studio</td><td>AI 產生投影片、轉成 PPTX，並配上語音旁白</td><td>python-pptx、edge-tts</td></tr>
+      <tr><td>圖片與 AI 生圖</td><td>處理圖片、呼叫 Gemini 生圖、簡易編輯器</td><td>Pillow、google-genai、flask</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>常見問題</h2>
+  <details><summary>我沒有 Claude 或 ChatGPT 付費帳號，還能參加嗎？</summary><p>可以。免費帳號也能登入桌面版；完全沒有帳號的話，當天和同事一起看即可。</p></details>
+  <details><summary>公司電腦不能自己裝軟體怎麼辦？</summary><p>請提早聯絡 IT 協助安裝 Python 與桌面版 App，並說明是教育訓練使用。</p></details>
+  <details><summary>第 4 步一直失敗，要不要放棄？</summary><p>不用硬撐。必做的只有前兩步。失敗畫面截圖帶來，現場一起排除。</p></details>
+  <details><summary>Mac 有 M1/M2/M3 晶片，清單會不一樣嗎？</summary><p>不用改。requirements.txt 會自動判斷：Apple 晶片的 Mac 裝 mlx-audio，其他電腦裝 qwen-asr。</p></details>
+</section>
+
+<footer>
+  有問題請找 DSR 智慧數據整合研究部 Wallace。打勾紀錄只存在你自己的瀏覽器，不會回傳。
+</footer>
+</div>
+
+<script>
+(function(){
+  const app=document.getElementById('app');
+  const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  function setOS(os){
+    app.dataset.os=os;
+    document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.os===os)));
+    store.set('harness-os',os);
+  }
+  const guess=/Mac/i.test(navigator.platform||navigator.userAgent)?'mac':'win';
+  setOS(store.get('harness-os')||guess);
+  document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setOS(b.dataset.os)));
+
+  const steps=[...document.querySelectorAll('.step')];
+  function refresh(){
+    let n=0;
+    steps.forEach(s=>{const c=s.querySelector('input[type=checkbox]');s.classList.toggle('done',c.checked);if(c.checked)n++;});
+    document.getElementById('progress').textContent='已完成 '+n+' / '+steps.length;
+  }
+  steps.forEach(s=>{
+    const c=s.querySelector('input[type=checkbox]');
+    c.checked=store.get('harness-'+s.dataset.key)==='1';
+    c.addEventListener('change',()=>{store.set('harness-'+s.dataset.key,c.checked?'1':'0');refresh();});
+  });
+  refresh();
+
+  document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',()=>{
+    const pre=btn.parentElement.querySelector('pre');
+    const text=pre.textContent;
+    const done=()=>{btn.textContent='已複製';setTimeout(()=>btn.textContent='複製',1500);};
+    const fallback=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='已選取，按 Ctrl+C';setTimeout(()=>btn.textContent='複製',2500);};
+    try{navigator.clipboard.writeText(text).then(done,fallback);}catch(e){fallback();}
+  }));
+})();
+</script>
+</body>
+</html>

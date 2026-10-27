@@ -188,11 +188,18 @@ footer{font-size:.9rem;color:var(--muted);border-top:1px solid var(--line);paddi
     <div class="step-head"><div class="step-body">
       <h3><span class="tag opt">選做</span>先看老師的簡報與素材</h3>
       <p>老師的簡報、素材，以及下一步要用的 <code class="i">requirements.txt</code> 都放在公司公槽（需在公司網路或 VPN 內）。</p>
-      <ol>
-        <li>用平常的方式打開公槽<span class="win-only">（檔案總管裡的網路磁碟）</span><span class="mac-only">（Finder 裡連過的公司伺服器）</span>。</li>
-        <li>進入公槽後，依序點進下面這幾層資料夾：</li>
+      <div class="win-only" style="display:flex;flex-direction:column;gap:10px">
+        <div class="code"><pre id="share-path">Z:\100.共用資源\6)教育訓練課程\2026_AI agent(Harness架構)分享_陳彥宏老師</pre><button class="copy" type="button">複製</button></div>
+        <ol>
+          <li>按上方「複製」。</li>
+          <li>按鍵盤 <code class="i">Win + R</code>，貼上路徑，按 Enter，就會直接打開資料夾。（也可以貼在檔案總管上方的網址列。）</li>
+        </ol>
+        <p class="note">打不開？代表你的公槽沒有掛在 Z 槽。請用平常的方式進入公槽，再依序點進「100.共用資源」→「6)教育訓練課程」→「2026_AI agent(Harness架構)分享_陳彥宏老師」。</p>
+      </div>
+      <ol class="mac-only">
+        <li>用平常的方式在 Finder 連上公槽（dsi-z）。</li>
+        <li>依序點進「100.共用資源」→「6)教育訓練課程」→「2026_AI agent(Harness架構)分享_陳彥宏老師」。</li>
       </ol>
-      <div class="code"><pre id="share-path">dsi-z → 100.共用資源 → 6)教育訓練課程 → 2026_AI agent(Harness架構)分享_陳彥宏老師</pre><button class="copy" type="button">複製</button></div>
     </div></div>
     <label class="check"><input type="checkbox" id="chk-materials"> 我打開資料夾看過了</label>
   </li>
